@@ -1,0 +1,55 @@
+version: '3'
+services:
+  ghost:
+    image: ghost:4-alpine
+    networks:
+      - traefik-public
+    environment:
+      url: https://${DOMAIN}
+      mail__transport: SMTP
+      mail__from: <${EMAIL_FROM}>
+      mail__options__host: $EMAIL_HOST
+      mail__options__port: $EMAIL_PORT
+      mail__options__auth__user: $EMAIL_USERNAME
+      mail__options__auth__pass: $EMAIL_PASSWORD
+      useMinFiles: 'true'
+      privacy__useUpdateCheck: 'true'
+      privacy__useGravatar: 'false'
+      privacy__useRpcPing: 'false'
+      privacy__useStructuredData: 'false'
+    volumes:
+    - ghost-data:/var/lib/ghost/content
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.ghost.ghost-data == true
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.ghost-http.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.ghost-http.entrypoints=http
+        - traefik.http.routers.ghost-http.middlewares=https-redirect
+        - traefik.http.routers.ghost-https.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.ghost-https.entrypoints=https
+        - traefik.http.routers.ghost-https.tls=true
+        - traefik.http.routers.ghost-https.tls.certresolver=le
+        - traefik.http.services.ghost.loadbalancer.server.port=2368
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+networks:
+  traefik-public:
+    external:
+      name: traefik-public
+volumes:
+  ghost-data:
