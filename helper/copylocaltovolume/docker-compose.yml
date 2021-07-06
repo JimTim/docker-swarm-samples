@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+  copylocaltovolume:
+    build: .
+    environment: 
+      CLEAR_BEFORE: "true"
+      USER_ID: "1001"
+      GROUP_ID: "1001"
+      CHMOD: "777"
+    volumes:
+      - ./local:/local
+      - stack-data:/volume
+volumes:
+  stack-data:
