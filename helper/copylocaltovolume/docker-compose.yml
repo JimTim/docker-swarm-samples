@@ -4,10 +4,14 @@ services:
   copylocaltovolume:
     build: .
     environment: 
+      DRY_RUN: true
       CLEAR_BEFORE: "true"
       USER_ID: "1001"
       GROUP_ID: "1001"
-      CHMOD: "777"
+      CHMOD: "400"
+      SHOW_VOLUME_LIST_BEFORE: true
+      SHOW_LOCAL_LIST_BEFORE: true
+      SHOW_VOLUME_LIST_AFTER: true
     volumes:
       - ./local:/local
       - stack-data:/volume
