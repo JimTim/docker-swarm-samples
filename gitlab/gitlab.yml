@@ -66,6 +66,7 @@ services:
           - node.labels.gitlab.gitlab-data == true
       replicas: 1
       labels:
+       - traefik.enable=true
        - "traefik.http.routers.gitlab.rule=Host(`${DOMAIN}`)"
        - "traefik.http.routers.gitlab.service=gitlab"
        - "traefik.http.routers.gitlab.tls=true"
