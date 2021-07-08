@@ -17,3 +17,4 @@ services:
       - stack-data:/volume
 volumes:
   stack-data:
+    external: true
