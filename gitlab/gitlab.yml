@@ -37,7 +37,7 @@ services:
         unicorn['worker_memory_limit_max'] = "250*(1024**2)"
         postgresql['shared_buffers'] = "512MB"
         prometheus_monitoring['enable'] = false
-        pages_external_url 'https://pages.${DOMAIN}'
+        pages_external_url 'https://${PAGES_DOMAIN}'
         pages_nginx['enable'] = false
         pages_nginx['listen_port'] = 80
         pages_nginx['listen_https'] = false
@@ -77,9 +77,9 @@ services:
        - "traefik.http.middlewares.gitlab-headers.headers.sslProxyHeaders.X-Forwarded-For=https"
        - "traefik.http.middlewares.gitlab-headers.headers.sslProxyHeaders.X-Forwarded-Ssl=on"
        - "traefik.http.middlewares.gitlab-headers.headers.customRequestHeaders.X-Forwarded-Ssl=on"
-       - "traefik.http.routers.pages.rule=HostRegexp(`pages.${DOMAIN}`,`{subdomain:[a-z]+}.pages.${DOMAIN}`)"
-       - "traefik.http.routers.pages.tls.domains[0].main=pages.${DOMAIN}"
-       - "traefik.http.routers.pages.tls.domains[0].sans=*.pages.${DOMAIN}"
+       - "traefik.http.routers.pages.rule=HostRegexp(`${PAGES_DOMAIN}`,`{subdomain:[a-z]+}.${PAGES_DOMAIN}`)"
+       - "traefik.http.routers.pages.tls.domains[0].main=${PAGES_DOMAIN}"
+       - "traefik.http.routers.pages.tls.domains[0].sans=*.${PAGES_DOMAIN}"
        - "traefik.http.routers.pages.service=pages"
        - "traefik.http.routers.pages.tls=true"
        - "traefik.http.services.pages.loadbalancer.server.port=8090"
@@ -91,20 +91,6 @@ services:
        - "traefik.http.middlewares.pages-headers.headers.customRequestHeaders.X-Forwarded-Ssl=on"
        - "traefik.http.middlewares.pages-redirect.redirectscheme.scheme=https"
        - "traefik.http.middlewares.pages-redirect.redirectscheme.permanent=true"
-       - "traefik.http.routers.docs.rule=HostRegexp(`docs.${DOMAIN}`,`{subdomain:[a-z]+}.docs.${DOMAIN}`)"
-       - "traefik.http.routers.docs.service=docs"
-       - "traefik.http.routers.docs.tls=true"
-       - "traefik.http.routers.docs.tls.domains[0].main=docs.${DOMAIN}"
-       - "traefik.http.routers.docs.tls.domains[0].sans=*.docs.${DOMAIN}"
-       - "traefik.http.services.docs.loadbalancer.server.port=8090"
-       - "traefik.http.routers.docs.tls.certresolver=le"
-       - "traefik.http.routers.docs.entrypoints=http,https"
-       - "traefik.http.routers.docs.middlewares=docs-headers,docs-redirect"
-       - "traefik.http.middlewares.docs-headers.headers.sslProxyHeaders.X-Forwarded-For=https"
-       - "traefik.http.middlewares.docs-headers.headers.sslProxyHeaders.X-Forwarded-Ssl=on"
-       - "traefik.http.middlewares.docs-headers.headers.customRequestHeaders.X-Forwarded-Ssl=on"
-       - "traefik.http.middlewares.docs-redirect.redirectscheme.scheme=https"
-       - "traefik.http.middlewares.docs-redirect.redirectscheme.permanent=true"
        - traefik.docker.network=traefik-public
        - traefik.constraint-label=traefik-public
       update_config:

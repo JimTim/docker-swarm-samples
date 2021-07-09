@@ -1,5 +1,6 @@
 ```bash
 export DOMAIN=example.com
+export PAGES_DOMAIN=pages.com
 export SSH_PORT=12222
 export TIME_ZONE=Europe/Berlin
 export EMAIL_FROM=gitlab@example.com
