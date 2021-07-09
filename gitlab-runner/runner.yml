@@ -8,6 +8,9 @@ services:
     - gitlab-runner1:/etc/gitlab-runner
     - /var/run/docker.sock:/var/run/docker.sock
     deploy:
+      placement:
+        constraints:
+          - node.labels.gitlab.runner-data == true
       labels:
         - "traefik.enable=false"
       replicas: 1
@@ -29,6 +32,9 @@ services:
     - gitlab-runner2:/etc/gitlab-runner
     - /var/run/docker.sock:/var/run/docker.sock
     deploy:
+      placement:
+        constraints:
+          - node.labels.gitlab.runner-data == true
       labels:
         - "traefik.enable=false"
       replicas: 1
