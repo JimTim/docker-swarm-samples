@@ -4,7 +4,7 @@ services:
   gitlab:
     image: 'gitlab/gitlab-ce:14.0.5-ce.0'
     networks:
-      - proxy
+      - traefik-public
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -103,7 +103,7 @@ services:
         reservations:
           memory: 3G
 networks:
-  proxy:
+  traefik-public:
     external:
       name: traefik-public
 volumes:
