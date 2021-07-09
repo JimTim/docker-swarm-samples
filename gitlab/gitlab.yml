@@ -33,7 +33,7 @@ services:
         gitlab_rails['backup_keep_time'] = 60
         sidekiq['concurrency'] = 3
         puma['worker_processes'] = 4
-        puma['per_worker_max_memory_mb'] = 250
+        puma['per_worker_max_memory_mb'] = 1024
         postgresql['shared_buffers'] = "512MB"
         prometheus_monitoring['enable'] = false
         pages_external_url 'https://${PAGES_DOMAIN}'
