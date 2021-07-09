@@ -50,7 +50,7 @@ services:
         gitlab_pages['inplace_chroot'] = true
         gitlab_pages['internal_gitlab_server'] = "https://${DOMAIN}"
         gitlab_pages['gitlab_server'] = 'https://${DOMAIN}'  # Example: 'https://gitlab.example.com'
-        gitlab_pages['api_secret_key'] = '${GITLAB_PAGES_AUTH_SECRET}'
+        gitlab_pages['api_secret_key'] = '${GITLAB_PAGES_API_SECRET_KEY}'
     ports:
       - target: 22
         published: $SSH_PORT
