@@ -91,6 +91,20 @@ services:
        - "traefik.http.middlewares.pages-headers.headers.customRequestHeaders.X-Forwarded-Ssl=on"
        - "traefik.http.middlewares.pages-redirect.redirectscheme.scheme=https"
        - "traefik.http.middlewares.pages-redirect.redirectscheme.permanent=true"
+       - "traefik.http.routers.docs.rule=HostRegexp(`${DOCS_DOMAIN}`,`{subdomain:[a-z]+}.${DOCS_DOMAIN}`)"
+       - "traefik.http.routers.docs.service=docs"
+       - "traefik.http.routers.docs.tls=true"
+       - "traefik.http.routers.docs.tls.domains[0].main=${DOCS_DOMAIN}"
+       - "traefik.http.routers.docs.tls.domains[0].sans=*.${DOCS_DOMAIN}"
+       - "traefik.http.services.docs.loadbalancer.server.port=8090"
+       - "traefik.http.routers.docs.tls.certresolver=le"
+       - "traefik.http.routers.docs.entrypoints=http,https"
+       - "traefik.http.routers.docs.middlewares=docs-headers,docs-redirect"
+       - "traefik.http.middlewares.docs-headers.headers.sslProxyHeaders.X-Forwarded-For=https"
+       - "traefik.http.middlewares.docs-headers.headers.sslProxyHeaders.X-Forwarded-Ssl=on"
+       - "traefik.http.middlewares.docs-headers.headers.customRequestHeaders.X-Forwarded-Ssl=on"
+       - "traefik.http.middlewares.docs-redirect.redirectscheme.scheme=https"
+       - "traefik.http.middlewares.docs-redirect.redirectscheme.permanent=true"
        - traefik.docker.network=traefik-public
        - traefik.constraint-label=traefik-public
       update_config:
