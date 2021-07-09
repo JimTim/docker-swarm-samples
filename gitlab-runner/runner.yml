@@ -1,0 +1,51 @@
+version: '3'
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine-v14.0.1
+    networks:
+      - traefik-public
+    volumes:
+    - gitlab-runner1:/etc/gitlab-runner
+    - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      labels:
+        - "traefik.enable=false"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 25M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+  gitlab-runner2:
+    image: gitlab/gitlab-runner:alpine-v13.10.0
+    networks:
+      - traefik-public
+    volumes:
+    - gitlab-runner2:/etc/gitlab-runner
+    - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      labels:
+        - "traefik.enable=false"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 25M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+networks:
+  traefik-public:
+    external:
+      name: traefik-public
+volumes:
+  gitlab-runner1:
+  gitlab-runner2:
