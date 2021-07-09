@@ -48,8 +48,9 @@ services:
         gitlab_pages['redirect_http'] = true
         gitlab_pages['access_control'] = false
         gitlab_pages['inplace_chroot'] = true
-        gitlab_pages['auth_secret'] = ${GITLAB_PAGES_AUTH_SECRET}
-        gitlab_pages['internal_gitlab_server'] = "https://hub.nerdware.de"
+        gitlab_pages['internal_gitlab_server'] = "https://${DOMAIN}"
+        gitlab_pages['gitlab_server'] = 'https://${DOMAIN}'  # Example: 'https://gitlab.example.com'
+        gitlab_pages['api_secret_key'] = '${GITLAB_PAGES_AUTH_SECRET}'
     ports:
       - target: 22
         published: $SSH_PORT
