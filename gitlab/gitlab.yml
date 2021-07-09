@@ -48,6 +48,7 @@ services:
         gitlab_pages['redirect_http'] = true
         gitlab_pages['access_control'] = false
         gitlab_pages['inplace_chroot'] = true
+        gitlab_pages['internal_gitlab_server'] = "https://hub.nerdware.de"
     ports:
       - target: 22
         published: $SSH_PORT
