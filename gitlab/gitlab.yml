@@ -6,6 +6,7 @@ services:
     networks:
       - traefik-public
     restart: always
+    hostname: ${DOMAIN}
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'https://${DOMAIN}'
