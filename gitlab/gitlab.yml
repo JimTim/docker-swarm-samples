@@ -54,7 +54,7 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - 'pages:/mnt/storage/pages'
+      - 'gitlab_pages:/mnt/storage/pages'
       - 'gitlab_config:/etc/gitlab'
       - 'gitlab_ssl:/etc/gitlab/ssl/'
       - 'gitlab_logs:/var/log/gitlab'
@@ -122,7 +122,7 @@ networks:
     external:
       name: traefik-public
 volumes:
-  pages:
+  gitlab_pages:
   gitlab_config:
   gitlab_ssl:
   gitlab_logs:
