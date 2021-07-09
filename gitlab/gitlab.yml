@@ -102,7 +102,7 @@ services:
         limits:
           memory: 7G
         reservations:
-          memory: 7G
+          memory: 3G
 networks:
   proxy:
     external:
