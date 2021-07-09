@@ -32,9 +32,8 @@ services:
         gitlab_ci['smtp_ca_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
         gitlab_rails['backup_keep_time'] = 60
         sidekiq['concurrency'] = 3
-        unicorn['worker_processes'] = 4
-        unicorn['worker_memory_limit_min'] = "200*(1024**2)"
-        unicorn['worker_memory_limit_max'] = "250*(1024**2)"
+        puma['worker_processes'] = 4
+        puma['per_worker_max_memory_mb'] = "250*(1024**2)"
         postgresql['shared_buffers'] = "512MB"
         prometheus_monitoring['enable'] = false
         pages_external_url 'https://${PAGES_DOMAIN}'
