@@ -56,6 +56,7 @@ services:
       - target: 22
         published: $SSH_PORT
         protocol: tcp
+        mode: ingress
     volumes:
       - 'gitlab_config:/etc/gitlab'
       - 'gitlab_ssl:/etc/gitlab/ssl/'
