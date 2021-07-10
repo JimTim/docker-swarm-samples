@@ -53,10 +53,7 @@ services:
         gitlab_pages['gitlab_server'] = 'https://${DOMAIN}' # Defaults to external_url
         gitlab_pages['internal_gitlab_server'] = "http://localhost:8080"
     ports:
-      - target: 22
-        published: $SSH_PORT
-        protocol: tcp
-        mode: host
+      - $SSH_PORT:22
     volumes:
       - 'gitlab_config:/etc/gitlab'
       - 'gitlab_ssl:/etc/gitlab/ssl/'
