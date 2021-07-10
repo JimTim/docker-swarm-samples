@@ -43,12 +43,14 @@ services:
         pages_nginx['listen_port'] = 80
         pages_nginx['listen_https'] = false
         gitlab_pages['enable'] = true
-        gitlab_pages['external_http'] = ["0.0.0.0:8091"]
         gitlab_pages['listen_proxy'] = "0.0.0.0:8090"
         gitlab_pages['inplace_chroot'] = true
-        gitlab_pages['redirect_http'] = true
         gitlab_pages['access_control'] = false
-        gitlab_pages['internal_gitlab_server'] = "https://${DOMAIN}"
+        gitlab_pages['status_uri'] = "/@status"
+        gitlab_pages['log_format'] = "json"
+        gitlab_pages['log_verbose'] = true
+        gitlab_pages['gitlab_server'] = 'https://${DOMAIN}' # Defaults to external_url
+        gitlab_pages['internal_gitlab_server'] = "http://localhost:8080"
     ports:
       - target: 22
         published: $SSH_PORT
