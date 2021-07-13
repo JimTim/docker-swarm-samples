@@ -11,6 +11,6 @@ export EMAIL_USERNAME=admin@example.com
 export EMAIL_PASSWORD=password
 ```
 
-You should find pages under subdomains:
-pages.example.com
-docs.example.com
+You should find pages under:
+pages.com
+docs.com
