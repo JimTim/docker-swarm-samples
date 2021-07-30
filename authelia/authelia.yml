@@ -1,0 +1,68 @@
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis:/data
+    networks:
+      - traefik-public
+    environment:
+      - TZ=Europe/Berlin
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      labels:
+        - traefik.enable=false
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+  authelia:
+    image: authelia/authelia
+    volumes:
+      - ./authelia:/config
+    networks:
+      - traefik-public
+    environment:
+      - TZ=Europe/Berlin
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.authelia.rule=Host(`auth.${DOMAIN}`)
+        - traefik.http.routers.authelia.entrypoints=https
+        - traefik.http.routers.authelia.tls=true
+        - traefik.http.routers.authelia.tls.certresolver=le
+        - traefik.http.services.authelia.loadbalancer.server.port=9091
+        - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://auth.${DOMAIN}  # yamllint disable-line rule:line-length
+        - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+        - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email  # yamllint disable-line rule:line-length
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+networks:
+  traefik-public:
+    external:
+      name: traefik-public
+volumes:
+  redis:
