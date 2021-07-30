@@ -1,38 +1,31 @@
-version: '3'
+version: "3.8"
 services:
-  redis:
-    image: redis:alpine
-    volumes:
-      - redis:/data
-    networks:
-      - traefik-public
-    environment:
-      - TZ=Europe/Berlin
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-      replicas: 1
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
-      labels:
-        - traefik.enable=false
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: any
   authelia:
     image: authelia/authelia
     volumes:
-      - ./authelia:/config
+      - authelia:/config
     networks:
       - traefik-public
     environment:
       - TZ=Europe/Berlin
+      - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
+      - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
+      - AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=/run/secrets/authelia_mail_password
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_mail_password
+    configs:
+      - source: authelia_config
+        target: /config/configuration.yml
+        uid: '103'
+        gid: '103'
+        mode: 0440
+      - source: authelia_users
+        target: /config/users_database.yml
+        uid: '103'
+        gid: '103'
+        mode: 0440
     deploy:
       placement:
         constraints:
@@ -65,4 +58,16 @@ networks:
     external:
       name: traefik-public
 volumes:
-  redis:
+  authelia:
+secrets:
+  authelia_jwt_secret:
+    external: true
+  authelia_session_secret:
+    external: true
+  authelia_mail_password:
+    external: true
+configs:
+  authelia_config:
+    external: true
+  authelia_users:
+    external: true
