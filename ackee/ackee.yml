@@ -40,7 +40,7 @@ services:
       restart_policy:
         condition: any
   mongo:
-    image: mongo
+    image: mongo:4
     volumes:
       - ackee-db-data:/data/db
     networks:
