@@ -41,6 +41,9 @@ services:
         - traefik.http.routers.ghost-https.entrypoints=https
         - traefik.http.routers.ghost-https.tls=true
         - traefik.http.routers.ghost-https.tls.certresolver=le
+        - traefik.http.routers.ghost-admin.rule=Host(`${DOMAIN}`) && PathPrefix(`/ghost`)
+        - traefik.http.routers.ghost-admin.tls.certresolver=le
+        - traefik.http.routers.ghost-admin.middlewares=authelia@docker
         - traefik.http.services.ghost.loadbalancer.server.port=2368
       update_config:
         parallelism: 1
