@@ -34,6 +34,8 @@ services:
         - traefik.http.routers.ackee-https.tls=true
         - traefik.http.routers.ackee-https.tls.certresolver=le
         - traefik.http.routers.ackee-https.middlewares=authelia@docker
+        - traefik.http.routers.ackee-tracker.rule=Host(`${DOMAIN}`) && Path(`/tracker.js`)
+        - traefik.http.routers.ackee-tracker.tls.certresolver=le
         - traefik.http.services.ackee.loadbalancer.server.port=3000
       update_config:
         parallelism: 1
