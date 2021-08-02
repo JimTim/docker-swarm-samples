@@ -29,7 +29,7 @@ services:
       restart_policy:
         condition: any
   app:
-    image: nextcloud:21
+    image: nextcloud:22
     networks:
       - traefik-public
     volumes:
