@@ -1,5 +1,5 @@
 ```bash
-export VERSION=0.8.0
+export VERSION=0.10.0
 export DOMAIN=appwrite.example.com
 export MYSQL_ROOT_PASSWORD=secure_mega_password
 export MYSQL_USER=user
