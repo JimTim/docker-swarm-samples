@@ -1,2 +1,4 @@
 **/portainer.env
 helper/copylocaltovolume/local/
+
+appwrite/appwrite.env

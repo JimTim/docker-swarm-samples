@@ -1,0 +1,491 @@
+version: "3.2"
+services:
+  appwrite:
+    image: appwrite/appwrite:${VERSION}
+    container_name: appwrite
+    networks:
+      - traefik-public
+    volumes:
+      - appwrite-uploads:/storage/uploads:rw
+      - appwrite-cache:/storage/cache:rw
+      - appwrite-config:/storage/config:rw
+      - appwrite-certificates:/storage/certificates:rw
+      - appwrite-functions:/storage/functions:rw
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_SYSTEM_EMAIL_NAME=${EMAIL_FROM_NAME}
+      - _APP_SYSTEM_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_SYSTEM_SECURITY_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_OPTIONS_ABUSE=enabled
+      - _APP_OPTIONS_FORCE_HTTPS=disabled
+      - _APP_OPENSSL_KEY_V1=${OPENSSL_KEY}
+      - _APP_DOMAIN=${DOMAIN}
+      - _APP_DOMAIN_TARGET=${DOMAIN}
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+      - _APP_CONSOLE_WHITELIST_EMAILS=${EMAIL_WHITELIST}
+      - _APP_SMTP_HOST=${EMAIL_HOST}
+      - _APP_SMTP_USERNAME=${EMAIL_USERNAME}
+      - _APP_SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - _APP_SMTP_PORT=${EMAIL_PORT}
+      - _APP_SMTP_SECURE=${EMAIL_SECURE}
+      - _APP_STORAGE_LIMIT=10000000
+      - _APP_FUNCTIONS_TIMEOUT=60
+      - _APP_FUNCTIONS_CONTAINERS=10
+      - _APP_FUNCTIONS_CPUS=1
+      - _APP_FUNCTIONS_MEMORY=512
+      - _APP_FUNCTIONS_MEMORY_SWAP=512
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.appwrite-http.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.appwrite-http.entrypoints=http
+        - traefik.http.routers.appwrite-http.middlewares=https-redirect
+        - traefik.http.routers.appwrite-https.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.appwrite-https.entrypoints=https
+        - traefik.http.routers.appwrite-https.tls=true
+        - traefik.http.routers.appwrite-https.tls.certresolver=le
+        - traefik.http.services.ghost.loadbalancer.server.port=80
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
+  appwrite-worker-usage:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-usage
+    container_name: appwrite-worker-usage
+    networks:
+      - traefik-public
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-audits:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-audits
+    container_name: appwrite-worker-audits
+    networks:
+      - traefik-public
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-webhooks:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-webhooks
+    container_name: appwrite-worker-webhooks
+    networks:
+      - traefik-public
+    environment:
+      - _APP_SYSTEM_SECURITY_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_ENV=${ENV}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-tasks:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-tasks
+    container_name: appwrite-worker-tasks
+    networks:
+      - traefik-public
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_OPENSSL_KEY_V1=${OPENSSL_KEY}
+      - _APP_SYSTEM_SECURITY_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-deletes:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-deletes
+    container_name: appwrite-worker-deletes
+    networks:
+      - traefik-public
+    volumes: 
+      - appwrite-uploads:/storage/uploads:rw
+      - appwrite-cache:/storage/cache:rw
+      - appwrite-certificates:/storage/certificates:rw
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-certificates:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-certificates
+    container_name: appwrite-worker-certificates
+    networks:
+      - traefik-public
+    volumes: 
+      - appwrite-config:/storage/config:rw
+      - appwrite-certificates:/storage/certificates:rw
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_SYSTEM_SECURITY_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_DOMAIN_TARGET=${DOMAIN}
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 0
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-functions:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-functions
+    container_name: appwrite-worker-functions
+    networks:
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - appwrite-functions:/storage/functions:rw
+      - /tmp:/tmp:rw
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_OPENSSL_KEY_V1=${OPENSSL_KEY}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
+      - _APP_FUNCTIONS_TIMEOUT=60
+      - _APP_FUNCTIONS_CONTAINERS=10
+      - _APP_FUNCTIONS_CPUS=1
+      - _APP_FUNCTIONS_MEMORY=512
+      - _APP_FUNCTIONS_MEMORY_SWAP=512
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-worker-mails:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: worker-mails
+    container_name: appwrite-worker-mails
+    networks:
+      - traefik-public
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_SYSTEM_EMAIL_NAME=${EMAIL_FROM_NAME}
+      - _APP_SYSTEM_EMAIL_ADDRESS=${EMAIL_FROM}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+      - _APP_SMTP_HOST=${EMAIL_HOST}
+      - _APP_SMTP_USERNAME=${EMAIL_USERNAME}
+      - _APP_SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - _APP_SMTP_PORT=${EMAIL_PORT}
+      - _APP_SMTP_SECURE=${EMAIL_SECURE}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  appwrite-schedule:
+    image: appwrite/appwrite:${VERSION}
+    entrypoint: schedule
+    container_name: appwrite-schedule
+    networks:
+      - traefik-public
+    environment:
+      - _APP_ENV=${ENV}
+      - _APP_REDIS_HOST=redis
+      - _APP_REDIS_PORT=6379
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+  mariadb:
+    image: appwrite/mariadb:1.2.0
+    container_name: mariadb
+    networks:
+      - traefik-public
+    volumes:
+      - appwrite-data:/var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=appwrite
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
+      labels:
+        - "traefik.enable=false"
+  redis:
+    container_name: appwrite-redis
+    image: redis:6.0-alpine3.12
+    networks:
+      - traefik-public
+    volumes:
+      - appwrite-redis:/data:rw
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.appwrite.appwrite-data == true
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+      labels:
+        - "traefik.enable=false"
+  influxdb:
+    image: influxdb:1.6
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - appwrite-influxdb:/var/lib/influxdb:rw
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.appwrite.appwrite-analytics == true
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+      labels:
+        - "traefik.enable=false"
+  telegraf:
+    image: appwrite/telegraf:1.0.0
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.appwrite.appwrite-analytics == true
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+      labels:
+        - "traefik.enable=false"
+networks:
+  traefik-public:
+    external:
+      name: traefik-public
+volumes:
+  appwrite-influxdb:
+  appwrite-redis:
+  appwrite-functions:
+  appwrite-config:
+  appwrite-certificates:
+  appwrite-cache:
+  appwrite-upload:
+
+
