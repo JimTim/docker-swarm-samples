@@ -544,6 +544,7 @@ networks:
     external:
       name: traefik-public
 volumes:
+  appwrite-data:
   appwrite-influxdb:
   appwrite-redis:
   appwrite-functions:
