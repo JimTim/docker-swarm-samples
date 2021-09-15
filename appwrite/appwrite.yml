@@ -155,9 +155,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-audits:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-audits
@@ -188,9 +188,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-webhooks:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-webhooks
@@ -217,9 +217,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-tasks:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-tasks
@@ -252,9 +252,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-deletes:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-deletes
@@ -289,9 +289,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-certificates:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-certificates
@@ -327,9 +327,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-functions:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-functions
@@ -370,9 +370,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-worker-mails:
     image: appwrite/appwrite:${VERSION}
     entrypoint: worker-mails
@@ -405,9 +405,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   appwrite-schedule:
     image: appwrite/appwrite:${VERSION}
     entrypoint: schedule
@@ -433,9 +433,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 128M
-        reservations:
           memory: 64M
+        reservations:
+          memory: 8M
   mariadb:
     image: appwrite/mariadb:1.2.0
     container_name: mariadb
@@ -461,9 +461,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 1024M
-        reservations:
           memory: 512M
+        reservations:
+          memory: 128M
       labels:
         - "traefik.enable=false"
   redis:
@@ -486,9 +486,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 256M
+          memory: 128M
         reservations:
-          memory: 64M
+          memory: 32M
       labels:
         - "traefik.enable=false"
   influxdb:
@@ -511,9 +511,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 256M
+          memory: 128M
         reservations:
-          memory: 64M
+          memory: 32M
       labels:
         - "traefik.enable=false"
   telegraf:
@@ -534,9 +534,9 @@ services:
         condition: any
       resources:
         limits:
-          memory: 256M
+          memory: 128M
         reservations:
-          memory: 64M
+          memory: 32M
       labels:
         - "traefik.enable=false"
 networks:
