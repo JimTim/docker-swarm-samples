@@ -551,4 +551,4 @@ volumes:
   appwrite-config:
   appwrite-certificates:
   appwrite-cache:
-  appwrite-upload:
+  appwrite-uploads:
