@@ -85,12 +85,10 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
-      - traefik.http.routers.appwrite_realtime_ws.entrypoints=http
       - traefik.http.routers.appwrite_realtime_ws.rule=Host(`${DOMAIN}`) && PathPrefix(`/v1/realtime`)
-      - traefik.http.routers.appwrite_realtime_ws.service=appwrite_realtime
-      - traefik.http.routers.appwrite_realtime_wss.entrypoints=https
+      - traefik.http.routers.appwrite_realtime_ws.entrypoints=http
       - traefik.http.routers.appwrite_realtime_wss.rule=Host(`${DOMAIN}`) && PathPrefix(`/v1/realtime`)
-      - traefik.http.routers.appwrite_realtime_wss.service=appwrite_realtime
+      - traefik.http.routers.appwrite_realtime_wss.entrypoints=https
       - traefik.http.routers.appwrite_realtime_wss.tls=true
       - traefik.http.routers.appwrite_realtime_wss.tls.certresolver=le
       - traefik.http.services.appwrite_realtime.loadbalancer.server.port=80
