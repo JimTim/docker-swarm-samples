@@ -1,7 +1,7 @@
 version: '3'
 services:
   gitlab-runner:
-    image: gitlab/gitlab-runner:alpine-v14.0.1
+    image: gitlab/gitlab-runner:alpine-v14.2.0
     networks:
       - traefik-public
     volumes:
@@ -25,7 +25,7 @@ services:
       restart_policy:
         condition: any
   gitlab-runner2:
-    image: gitlab/gitlab-runner:alpine-v14.0.1
+    image: gitlab/gitlab-runner:alpine-v14.2.0
     networks:
       - traefik-public
     volumes:
