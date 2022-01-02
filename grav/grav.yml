@@ -1,0 +1,42 @@
+version: '3'
+services:
+  grav:
+    image: jimtim/grav:latest
+    networks:
+      - traefik-public
+    volumes:
+    - grav-data:/var/www/html
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.ghost.ghost-data == true
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.grav-http.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.grav-http.entrypoints=http
+        - traefik.http.routers.grav-http.middlewares=https-redirect
+        - traefik.http.routers.grav-https.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.grav-https.entrypoints=https
+        - traefik.http.routers.grav-https.tls=true
+        - traefik.http.routers.grav-https.tls.certresolver=le
+        - traefik.http.services.grav.loadbalancer.server.port=80
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+networks:
+  traefik-public:
+    external:
+      name: traefik-public
+volumes:
+  grav-data:
