@@ -82,7 +82,7 @@ services:
     depends_on:
       - db
   cron:
-    image: nextcloud:21
+    image: nextcloud:23
     networks:
       - traefik-public
     volumes:
