@@ -1,7 +1,7 @@
 version: '3'
 services:
   grav:
-    image: jimtim/grav:latest
+    image: nerdware/grav:6828
     networks:
       - traefik-public
     volumes:
