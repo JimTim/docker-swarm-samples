@@ -1,7 +1,7 @@
 version: '3'
 services:
   ackee:
-    image: electerious/ackee
+    image: electerious/ackee:3.3.0
     networks:
       - traefik-public
       - ackee-db
