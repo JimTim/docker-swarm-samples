@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   gitlab:
-    image: 'gitlab/gitlab-ce:14.2.4-ce.0'
+    image: 'gitlab/gitlab-ce:14.6.0-ce.0'
     networks:
       - traefik-public
     restart: always
