@@ -67,7 +67,7 @@ secrets:
   authelia_mail_password:
     external: true
 configs:
-  authelia_config:
+  authelia_config_new:
     external: true
   authelia_users:
     external: true
