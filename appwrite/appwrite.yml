@@ -126,18 +126,25 @@ services:
           memory: 256M
         reservations:
           memory: 64M
-
-  
-  appwrite-worker-usage:
+  appwrite-worker-database:
     image: appwrite/appwrite:${VERSION}
-    entrypoint: worker-usage
-    container_name: appwrite-worker-usage
+    entrypoint: worker-database
+    container_name: appwrite-worker-database
     networks:
       - traefik-public
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - mariadb
     environment:
       - _APP_ENV=${ENV}
       - _APP_REDIS_HOST=redis
       - _APP_REDIS_PORT=6379
+      - _APP_DB_HOST=mariadb
+      - _APP_DB_PORT=3306
+      - _APP_DB_SCHEMA=appwrite
+      - _APP_DB_USER=${MYSQL_USER}
+      - _APP_DB_PASS=${MYSQL_PASSWORD}
     deploy:
       placement:
         constraints:
@@ -435,7 +442,7 @@ services:
         reservations:
           memory: 8M
   mariadb:
-    image: appwrite/mariadb:1.2.0
+    image: mariadb:10.7
     container_name: mariadb
     networks:
       - traefik-public
@@ -490,7 +497,7 @@ services:
       labels:
         - "traefik.enable=false"
   influxdb:
-    image: influxdb:1.6
+    image: appwrite/influxdb:1.0.0
     restart: unless-stopped
     networks:
       - traefik-public
@@ -515,7 +522,7 @@ services:
       labels:
         - "traefik.enable=false"
   telegraf:
-    image: appwrite/telegraf:1.0.0
+    image: appwrite/telegraf:1.2.0
     restart: unless-stopped
     networks:
       - traefik-public
